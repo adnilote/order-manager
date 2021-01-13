@@ -7,7 +7,7 @@
 
 ## Project Structure
 The project stucture was inspired by [DDD](https://dev.to/stevensunflash/using-domain-driven-design-ddd-in-golang-3ee5) and [clean architecture](https://medium.com/@eminetto/clean-architecture-using-golang-b63587aa5e3f).
-
+```
 .
 └── app
    │  
@@ -24,6 +24,7 @@ The project stucture was inspired by [DDD](https://dev.to/stevensunflash/using-d
    │   - business logic
    └── api
        - grpc api
+```
 
 ## Run service
 Dependency: kafka:9092
