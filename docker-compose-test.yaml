@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  order-manager-test:
+    image: $DOCKER_IMAGE
+    container_name: order-manager-test
+    environment:
+      - 'GOPROXY='
+    networks:
+      - order-manager-test
+
+  order-manager-redis-test:
+    image: "redis:alpine"
+    container_name: order-manager-redis-test
+    ports:
+        - "6379:6379"
+    volumes:
+        - $PWD/redis-data-test:/var/lib/redis
+        - $PWD/redis.conf-test:/usr/local/etc/redis/redis.conf
+    environment:
+        - REDIS_REPLICATION_MODE=master
+    networks:
+        - order-manager-test
+    command: redis-server --requirepass 1234
+
+networks:
+  order-manager-test:
+    name: order-manager-test

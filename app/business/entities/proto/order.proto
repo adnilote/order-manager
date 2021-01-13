@@ -1,0 +1,200 @@
+syntax = "proto3";
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+package order;
+
+option (gogoproto.equal_all) = true;
+option (gogoproto.verbose_equal_all) = true;
+option (gogoproto.populate_all) = true;
+option (gogoproto.enum_stringer_all) = true;
+
+service OrderManager {
+  rpc GetOrderUpdate(GetOrderUpdateRequest) returns (stream GetOrderUpdateResponse) {}
+}
+
+message GetOrderUpdateRequest {
+}
+
+message GetOrderUpdateResponse {
+  string event = 1;
+  Order order = 2;
+}
+
+message PlaceOrderRequest {
+  Instrument instrument = 1 [json_name = "instrument"];
+  string order_type = 2 [json_name = "order_type"];
+  string stop_loss = 3 [json_name = "stopLoss"];
+  double quantity = 4 [json_name = "quantity"];
+  Side side = 5 [json_name = "side"];
+  string id_done_parent_id = 7 [json_name = "idDoneParentId"];
+  string place_interval = 8 [json_name = "placeInterval"];
+  string duration = 9 [json_name = "duration"];
+  string oco_group = 10 [json_name = "ocoGroup"];
+  string take_profit = 11 [json_name = "takeProfit"];
+  string stop_price = 12 [json_name = "stopPrice"];
+  string client_tag = 13 [json_name = "clientTag"];
+  string limit_price = 14 [json_name = "limitPrice"];
+  string gtt_expiration = 15 [json_name = "gttExpiration"];
+  string account = 16 [json_name = "account"];
+  string price_distance = 17 [json_name = "priceDistance"];
+  string part_quantity = 18 [json_name = "partQuantity"];
+}
+
+message Instrument {
+  string id = 1 [json_name = "id"];
+  string symbol = 2 [json_name = "symbol"];
+  string type = 3 [json_name = "type"];
+}
+
+message PlaceOrderResponse {
+  repeated Order orders = 1 [json_name = "orders"];
+}
+
+message OrderParameters {
+  Instrument instrument = 1 [json_name = "instrument"];
+  string order_type = 2 [json_name = "orderType"];
+  string limit_price = 3 [json_name = "limitPrice"];
+  Side side = 4 [json_name = "side"];
+  string if_done_parent_id = 6 [json_name = "ifDoneParentId"];
+  string place_interval = 7 [json_name = "placeInterval"];
+  string duration = 8 [json_name = "duration"];
+  string stop_price = 9 [json_name = "stopPrice"];
+  double quantity = 10 [json_name = "quantity"];
+  string gtt_expiration = 11 [json_name = "gttExpiration"];
+  string oco_group = 12 [json_name = "ocoGroup"];
+  string price_distance = 13 [json_name = "priceDistance"];
+  string part_quantity = 14 [json_name = "partQuantity"];
+}
+
+enum Side {
+  buy = 0; 
+  sell = 1;
+}
+
+message Order {
+  string current_modification_id = 2 [json_name = "currentModificationId"];
+  google.protobuf.Timestamp place_time = 3 [json_name = "placeTime", (gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  string username = 4 [json_name = "username"];
+  string order_id = 5 [json_name = "orderId"];
+  OrderState order_state = 6 [json_name = "orderState"];
+  OrderParameters order_parameters = 7 [json_name = "orderParameters"];
+  string client_tag = 8 [json_name = "clientTag"];
+  string account = 9 [json_name = "account"];
+}
+
+enum Status {
+  placing = 0;
+  pending = 1;
+  working = 2;
+  cancelled = 3;
+  filled = 4;
+  rejected = 5;
+}
+
+message OrderState {
+  google.protobuf.Timestamp last_update_time = 1 [json_name = "lastUpdateTime", (gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  Status status = 2 [json_name = "status"];
+  string reason = 3 [json_name = "reason"];
+  repeated Trade trades = 4 [json_name = "trades", (gogoproto.nullable) = false];
+}
+
+message Trade {
+  google.protobuf.Timestamp time = 1  [(gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  double quantity = 2 [json_name = "quantity"];
+  int64 position = 3 [json_name = "position"];
+  double price = 5 [json_name = "price"];
+}
+
+message GetAccountSummaryRequest {
+  string account = 1 [json_name = "account"];
+  string currency = 2 [json_name = "currency"];
+}
+
+message GetAccountSummaryResponse {
+  AccountSummary account_summary = 1 [json_name = "accountSummary"];
+}
+
+message AccountSummary {
+  string net_asset_value = 1 [json_name = "netAssetValue"];
+  repeated Position positions = 2 [json_name = "positions"];
+  string currency = 3 [json_name = "currency"];
+  string margin_utilization = 4 [json_name = "marginUtilization"];
+  google.protobuf.Timestamp timestamp = 5 [json_name = "timestamp", (gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  string money_used_for_margin = 6 [json_name = "moneyUsedForMargin"];
+  repeated Currency currencies = 7 [json_name = "currencies"];
+  string account = 8 [json_name = "account"];
+  string session_date = 9 [json_name = "sessionDate"];
+  string free_money = 10 [json_name = "freeMoney"];
+}
+
+message Currency {
+  string code = 1 [json_name = "code"];
+  string converted_value = 2 [json_name = "convertedValue"];
+  string value = 3 [json_name = "value"];
+}
+
+message Position {
+  string converted_pnl = 1;
+  string symbol_type = 2;
+  string currency = 3;
+  string id = 4;
+  string pnl = 5;
+  string price = 6;
+  string quantity = 7;
+  string symbol_id = 8;
+  string converted_value = 9;
+  string average_price = 10;
+  string value = 11;
+}
+
+message TotalPosition {
+  
+  string account = 12 [json_name = "account"];
+  google.protobuf.Timestamp last_update_time = 8 [json_name = "lastUpdateTime", (gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  Instrument instrument = 2 [json_name = "instrument"];
+  double realized_pnl = 14 [json_name = "realizedPnl"];
+  double daily_realized_pnl = 15 [json_name = "dailyRealizedPnl"];
+
+  // string converted_pnl = 1 [json_name = "convertedPnl"];
+  // string currency = 3 [json_name = "currency"];
+  // string id = 4 [json_name = "id"];
+  // string pnl = 5 [json_name = "pnl"];
+  // string price = 6 [json_name = "price"];
+  double quantity = 7 [json_name = "quantity"];
+  // string symbol_id = 8;
+  // string converted_value = 9 [json_name = "convertedValue"];
+  double average_price = 10 [json_name = "averagePrice"];
+  // string value = 11 [json_name = "value"];
+}
+
+message CalculatedPosition {
+  string account = 12 [json_name = "account"];
+  string strategy = 13 [json_name = "strategy"];
+  Instrument instrument = 2 [json_name = "instrument"];
+  google.protobuf.Timestamp last_update_time = 8 [json_name = "lastUpdateTime", (gogoproto.stdtime) = true, (gogoproto.nullable) = false];
+  double realized_pnl = 14 [json_name = "realizedPnl"];
+  double daily_realized_pnl = 15 [json_name = "dailyRealizedPnl"];
+  
+  // string converted_pnl = 1 [json_name = "convertedPnl"];
+  // string currency = 3 [json_name = "currency"];
+  // string id = 4 [json_name = "id"];
+  // double pnl = 5 [json_name = "pnl"];
+  // double price = 6 [json_name = "price"];
+  double quantity = 7 [json_name = "quantity"];
+  // string symbol_id = 8;
+  // string converted_value = 9 [json_name = "convertedValue"];
+  double average_price = 10 [json_name = "averagePrice"];
+  // string value = 11 [json_name = "value"];
+}
+
+message GetPositionRequest {
+  string account = 1;
+  string strategy = 2;
+}
+
+message GetPositionResponse {
+  CalculatedPosition calculated_position = 1 [json_name = "calculatedPosition"];
+  TotalPosition total_position = 2 [json_name = "totalPosition"];
+}

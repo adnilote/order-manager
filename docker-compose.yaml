@@ -1,0 +1,34 @@
+version: "3.7"
+
+services:
+  order-manager:
+    image: $DOCKER_IMAGE
+    container_name: order-manager
+    networks:
+      - skynet
+      - order-manager
+    ports:
+      - 9003:9003
+    environment:
+      WAIT_HOSTS: order-manager-redis:6379
+      WAIT_BEFORE_HOSTS: 3
+
+  order-manager-redis:
+    image: "redis:alpine"
+    container_name: order-manager-redis
+    ports:
+        - "6379:6379"
+    volumes:
+        - $PWD/redis-data:/var/lib/redis
+        - $PWD/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+        - REDIS_REPLICATION_MODE=master
+    networks:
+        - order-manager
+    command: redis-server --requirepass 1234
+
+networks:
+  order-manager:
+    name: order-manager
+  skynet:
+    name: skynet

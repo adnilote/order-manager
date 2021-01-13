@@ -1,0 +1,19 @@
+
+http:
+    port: 9003
+
+kafka:
+    address: kafka:9092
+    order_producer:
+        topic: orders
+    order_consumer:
+        topic: orders
+        group_id: order-manager
+        offset: beginning
+
+redis:
+    address: order-manager-redis-test:6379
+    password: 1234
+    database: 0
+
+sentry_dsn: https://d8165a421c714669baf2425c2573a3ec@o487999.ingest.sentry.io/5547556
